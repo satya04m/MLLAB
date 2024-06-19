@@ -1,0 +1,39 @@
+import numpy as np # linear algebra
+import pandas as pd 
+import sklearn as sk
+import sklearn . linear_model as slm
+import matplotlib . pyplot as plt
+from sklearn . model_selection import train_test_split
+
+data = pd.read_csv('housing.csv')
+
+data_refine = data[['longitude', 'latitude', 'housing_median_age', 'total_rooms', 'median_house_value']]
+
+# Separate features and target variable
+X = data_refine.drop('median_house_value', axis=1)
+y = data_refine['median_house_value']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+# Initialize and fit the linear regression model
+LR = slm.LinearRegression()
+LR.fit(X_train, y_train)
+# Predict on the test set
+predict = LR.predict(X_test)
+# Print predicted and actual values for the first record in the test set
+print('Predicted Value:', predict[0])
+print('Actual Value:', y_test.values[0])
+# Calculate R-squared score
+print('R-squared score:', LR.score(X_test, y_test))
+
+# Plot the first 100 predicted vs actual values
+plt.figure(figsize=(10, 6))
+plt.plot(y_test.values[:100], marker='o', label='Actual')
+plt.plot(predict[:100], marker='x', linestyle='--', label='Predicted')
+plt.xlabel('Sample Index')
+plt.ylabel('Median House Value')
+plt.title('Actual vs Predicted Median House Values')
+plt.legend()
+plt.show()
+
