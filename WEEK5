@@ -1,0 +1,60 @@
+# Load necessary libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+plt.style.use('ggplot')
+# Load the dataset (adjust the path as per your environment)
+df = pd.read_csv('diabetes.csv')
+# Print the first 5 rows of the dataframe
+print(df.head())
+# Check the shape of the dataframe
+print(df.shape)
+
+# Create numpy arrays for features (X) and target (y)
+X = df.drop('Outcome', axis=1).values
+y = df['Outcome'].values
+
+# Import train_test_split function
+from sklearn.model_selection import train_test_split
+# Split the data into training and test sets (using stratified sampling for class balance)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42, stratify=y)
+
+# Import the KNeighborsClassifier
+from sklearn.neighbors import KNeighborsClassifier
+
+# Setup arrays to store training and test accuracies
+neighbors = np.arange(1, 10)
+train_accuracy = np.empty(len(neighbors))
+test_accuracy = np.empty(len(neighbors))
+
+# Loop over different values of k (number of neighbors)
+for i, k in enumerate(neighbors):
+    # Setup a k-NN classifier with k neighbors
+    knn = KNeighborsClassifier(n_neighbors=k)
+    
+    # Fit the model
+    knn.fit(X_train, y_train)
+    
+    # Compute accuracy on the training set
+    train_accuracy[i] = knn.score(X_train, y_train)
+    
+    # Compute accuracy on the test set
+    test_accuracy[i] = knn.score(X_test, y_test)
+
+# Generate plot
+plt.title('k-NN Varying number of neighbors')
+plt.plot(neighbors, test_accuracy, label='Testing Accuracy')
+plt.plot(neighbors, train_accuracy, label='Training Accuracy')
+plt.legend()
+plt.xlabel('Number of neighbors')
+plt.ylabel('Accuracy')
+plt.show()
+# Selecting k=7 based on the plot (just an example, choose the best k based on your analysis)
+k = 7
+# Setup a k-NN classifier with k neighbors
+knn = KNeighborsClassifier(n_neighbors=k)
+# Fit the model
+knn.fit(X_train, y_train)
+# Get accuracy on the test set
+accuracy = knn.score(X_test, y_test)
+print(f'Accuracy of k-NN classifier with k={k}: {accuracy:.2f}')
