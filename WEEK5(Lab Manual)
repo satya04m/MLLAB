@@ -1,0 +1,42 @@
+from sklearn.datasets import make_blobs
+from sklearn.model_selection import LeaveOneOut
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+
+# Step 1: Import necessary modules
+
+# Step 2: Creating dataset
+X, y = make_blobs(n_samples=100, random_state=1)
+
+# Step 3: Create LOOCV procedure
+cv = LeaveOneOut()
+
+# Step 4: Initialize variables
+y_true, y_pred = list(), list()
+
+# Step 5: Loop over splits and calculate metrics
+for train_ix, test_ix in cv.split(X):
+    # Step 6: Split data
+    X_train, X_test = X[train_ix, :], X[test_ix, :]
+    y_train, y_test = y[train_ix], y[test_ix]
+    
+    # Step 7: Fit model
+    model = RandomForestClassifier(random_state=1)
+    model.fit(X_train, y_train)
+    
+    # Step 8: Predict class labels
+    yhat = model.predict(X_test)
+    
+    # Step 9: Store true and predicted labels
+    y_true.append(y_test[0])
+    y_pred.append(yhat[0])
+
+# Step 10: Calculate metrics
+accuracy = accuracy_score(y_true, y_pred)
+precision = precision_score(y_true, y_pred, average='weighted')
+recall = recall_score(y_true, y_pred, average='weighted')
+
+# Step 11: Print results
+print('Accuracy: %.3f' % accuracy)
+print('Precision: %.3f' % precision)
+print('Recall: %.3f' % recall)
